@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 
 const POSITION = { x: 0, y: 0 };
 
-const Drraggable = ({ children }) => {
+const Drraggable = ({ children, onDrag, onDragEnd, id }) => {
   const [state, setState] = useState({
     isDragging: false,
     origin: POSITION,
@@ -12,32 +12,35 @@ const Drraggable = ({ children }) => {
   const styles = useMemo(
     () => ({
       cursor: state.isDragging ? "-webkit-grabbing" : "-webkit-grab",
-      transform: `translate(${state.translation.x}px,${state.translation.y})`,
+      transform: `translate(${state.translation.x}px,${state.translation.y}px)`,
       transition: state.isDragging ? "none" : "transform 500ms",
       zIndex: state.isDragging ? 2 : 1,
       position: state.isDragging ? "absolute" : "relative",
     }),
     [state.isDragging, state.translation]
   );
-  const handleMouseDown = useCallback(({ clientX, ClientY }) => {
+
+  const handleMouseDown = useCallback(({ clientX, clientY }) => {
     setState((state) => ({
       ...state,
       isDragging: true,
-      origin: { x: clientX, y: ClientY },
+      origin: { x: clientX, y: clientY },
     }));
   }, []);
 
   const handleMouseMove = useCallback(
-    ({ clientX, ClientY }) => {
+    ({ clientX, clientY }) => {
+      const translation = {
+        x: clientX - state.origin.x,
+        y: clientY - state.origin.y,
+      };
       setState((state) => ({
         ...state,
-        translation: {
-          x: clientX - state.origin.x,
-          y: ClientY - state.origin.y,
-        },
+        translation,
       }));
+      onDrag({ translation, id });
     },
-    [state.origin]
+    [state.origin, onDrag, id]
   );
 
   const handleMouseUp = useCallback(() => {
@@ -45,7 +48,8 @@ const Drraggable = ({ children }) => {
       ...state,
       isDragging: false,
     }));
-  }, []);
+    onDragEnd();
+  }, [onDragEnd]);
 
   useEffect(() => {
     if (state.isDragging) {
@@ -54,7 +58,7 @@ const Drraggable = ({ children }) => {
     } else {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
-      setState((state) => ({ ...state, translation: POSITION }));
+      setState((state) => ({ ...state, translation: { x: 0, y: 0 } }));
     }
   }, [state.isDragging, handleMouseMove, handleMouseUp]);
 
