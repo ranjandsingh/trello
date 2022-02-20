@@ -54,33 +54,47 @@ const App = () => {
     draggedItem: null,
   });
 
+  const calculateDeltaXY = async ({ x, y }) => {
+    const translationy = Math.round(y / HEIGHT);
+    const translationx = Math.round(x / 500);
+    return { x: translationx, y: translationy };
+  };
+
   const handleDrag = useCallback(
-    ({ translation, id }) => {
+    async ({ translation, id }) => {
+      const { x, y } = await calculateDeltaXY(translation);
       const delta = Math.round(translation.y / HEIGHT);
       let index = state.order.map((item) => item.id).indexOf(id);
+      let { dragOrder, dragOrder2 } = state;
       let draggedItem = {};
       let ColumnIndex = 1;
       draggedItem = state.order[index];
-      let dragOrder = state.order.filter((index) => index.id !== id);
+      dragOrder = state.order.filter((index) => index.id !== id);
+      dragOrder2 = state.order2.filter((index) => index.id !== id);
       if (index === -1) {
         index = state.order2.map((item) => item.id).indexOf(id);
         ColumnIndex = 2;
         draggedItem = state.order2[index];
-        dragOrder = state.order2.filter((index) => index.id !== id);
       }
-      console.log("delta", delta);
 
       if (!inRange(index + delta, 0, items.length)) {
         return;
       }
 
-      dragOrder.splice(index + delta, 0, draggedItem);
+      //Test temp
+      if (x > 0) {
+        ColumnIndex = 2;
+        dragOrder2.splice(0 + delta, 0, draggedItem);
+      } else {
+        dragOrder.splice(index + delta, 0, draggedItem);
+      }
 
       setState((state) => ({
         ...state,
         draggedIndex: id,
         dragCollumnIndex: ColumnIndex,
         dragOrder,
+        dragOrder2,
       }));
     },
     [state.order, state.order2, items.length]
@@ -89,8 +103,8 @@ const App = () => {
   const handleDragEnd = useCallback(() => {
     setState((state) => ({
       ...state,
-      order: state.dragCollumnIndex === 1 ? state.dragOrder : state.order,
-      order2: state.dragCollumnIndex === 2 ? state.dragOrder : state.order2,
+      order: state.dragOrder,
+      order2: state.dragOrder2,
       draggedIndex: null,
     }));
   }, []);
@@ -152,7 +166,7 @@ const App = () => {
 export default App;
 
 const Container = styled.div`
-  width: 50vw;
+  width: 500px;
   min-height: 100vh;
 `;
 
