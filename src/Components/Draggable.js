@@ -52,8 +52,7 @@ const Drraggable = ({ children, onDrag, onDragEnd, id, item, mouseDown }) => {
       ...state,
       isDragging: false,
     }));
-    onDragEnd(item);
-  }, [onDragEnd]);
+  }, []);
 
   useEffect(() => {
     if (state.isDragging) {

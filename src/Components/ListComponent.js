@@ -1,32 +1,88 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 
-import Draggable from "./Draggable";
-import { Container, Rect } from "./Wrappers";
-import useDrop from "../Hooks/useDrop";
 import { Card } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import CardHeader from "@mui/material/CardHeader";
+import IconButton, { IconButtonProps } from "@mui/material/IconButton";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
 
-const ListComponent = ({ name, children, onDrop, handleMouse, HandleDrop }) => {
-  const ListRef = useRef();
-  // const { dropState } = useDrop({
-  //   ref: ListRef,
-  //   name,
-  //   onDrop,
-  // });
+const ListComponent = ({ name, children, onDrop, addTask }) => {
+  const [taskNamem, setTaskName] = useState("");
+  const [open, setOpen] = useState(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const Submit = () => {
+    if (taskNamem.length > 0) {
+      addTask({
+        name: taskNamem,
+        currentList: name,
+        description: "",
+      });
+      setOpen(false);
+    }
+  };
+
   return (
     <div
       style={{ margin: "10px" }}
-      onDrop={(e) => {
-        HandleDrop(name);
+      onDragOver={(e) => {
+        e.preventDefault();
       }}
-      // onMouseEnter={() => handleMouse(name)}
-      // onMouseLeave={() => handleMouse(null)}
-      ref={ListRef}
+      onDrop={(e) => {
+        onDrop(name);
+      }}
     >
-      <Card>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Add A New Task</DialogTitle>
+        <DialogContent>
+          <DialogContentText>Please Addd Task name Below</DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="name"
+            label="Task Name"
+            type="text"
+            fullWidth
+            variant="standard"
+            onChange={(e) => setTaskName(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={Submit}>Add</Button>
+        </DialogActions>
+      </Dialog>
+      <Card
+        style={{
+          height: "100vh",
+          minWidth: "300px",
+        }}
+      >
+        <CardHeader
+          action={
+            <IconButton aria-label="settings" onClick={handleClickOpen}>
+              <MoreVertIcon />
+            </IconButton>
+          }
+          title={<h3>{name}</h3>}
+          subheader="September 14, 2016"
+        />
         <CardContent>
-          <h3>{name}</h3>
           <div className="body">{children}</div>
         </CardContent>
       </Card>
