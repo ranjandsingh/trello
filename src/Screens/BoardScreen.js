@@ -4,6 +4,7 @@ import { range, inRange } from "lodash";
 import Draggable from "../Components/Draggable";
 import ListComponent from "../Components/ListComponent";
 import { Container, Rect } from "../Components/Wrappers";
+import Sidebar from "../Components/Sidebar";
 
 const MAX = 5;
 const HEIGHT = 180;

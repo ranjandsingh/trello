@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useContext } from "react";
+import Context from "../Context";
 
 const HomeScreen = () => {
-  return <div>Home</div>;
+  const { globalState, currrentBorad } = useContext(Context);
+  return <div>{currrentBorad.name} </div>;
 };
 
 export default HomeScreen;
