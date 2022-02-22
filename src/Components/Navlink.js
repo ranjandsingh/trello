@@ -14,7 +14,6 @@ const Navlink = ({ children, to, ...props }) => {
         >
           {children}
         </Link>
-        {match && " (active)"}
       </div>
     </div>
   );

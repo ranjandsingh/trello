@@ -15,7 +15,8 @@ export const Rect = styled.div.attrs((props) => ({
   user-select: none;
   height: 180px;
   background: #fff;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.15);
+  margin-top: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
