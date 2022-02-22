@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 
-const useDrop = ({ ref, onDrop }) => {
+const useDrop = ({ ref, name, onDrop }) => {
   const [dropState, updateDropState] = useState("droppable");
   const dropOverCb = (ev) => {
     ev.preventDefault();
+    console.log(name);
     updateDropState("dragging over");
   };
 
   const dropCb = (ev) => {
     ev.preventDefault();
-    onDrop(ev.dataTransfer.getData("source"));
+    onDrop(name);
     updateDropState("dropped");
   };
   useEffect(() => {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 
 const POSITION = { x: 0, y: 0 };
 
-const Drraggable = ({ children, onDrag, onDragEnd, id }) => {
+const Drraggable = ({ children, onDrag, onDragEnd, id, item }) => {
   const [state, setState] = useState({
     isDragging: false,
     origin: POSITION,
@@ -48,7 +48,7 @@ const Drraggable = ({ children, onDrag, onDragEnd, id }) => {
       ...state,
       isDragging: false,
     }));
-    onDragEnd();
+    onDragEnd(item);
   }, [onDragEnd]);
 
   useEffect(() => {
