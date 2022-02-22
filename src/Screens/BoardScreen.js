@@ -14,28 +14,28 @@ const HEIGHT = 180;
 const BoardScreen = () => {
   const { globalState, setGlobalState, currrentBorad } = useContext(Context);
 
-  const [state, setState] = useState({
-    // order: items,
-    // order2: ITEMS2,
-    // dragOrder: items,
-    // dragOrder2: ITEMS2, // items order while dragging
-    draggedIndex: null,
-    draggedItem: null,
-    currentCountainer: null,
-    currentList: null,
-  });
+  // const [state, setState] = useState({
+  //   // order: items,
+  //   // order2: ITEMS2,
+  //   // dragOrder: items,
+  //   // dragOrder2: ITEMS2, // items order while dragging
+  //   draggedIndex: null,
+  //   draggedItem: null,
+  //   currentCountainer: null,
+  //   currentList: null,
+  // });
+  const [LocalBoard, setLocalBoard] = useState(currrentBorad);
   const [loaded, setLoaded] = useState(false);
+  const [currentItem, setCurrentItem] = useState(null);
   const [allTasks, SetAllTasks] = useState(null);
   useEffect(() => {
     const TempState = [];
-    currrentBorad.list.map((item) => {
-      TempState[item] = currrentBorad.tasks.filter(
-        (i) => i.currentList === item
-      );
+    LocalBoard.list.map((item) => {
+      TempState[item] = LocalBoard.tasks.filter((i) => i.currentList === item);
     });
     SetAllTasks(TempState);
     setLoaded(true);
-  }, []);
+  }, [LocalBoard]);
 
   const calculateDeltaXY = async ({ x, y }) => {
     const translationy = Math.round(y / HEIGHT);
@@ -43,75 +43,97 @@ const BoardScreen = () => {
     return { x: translationx, y: translationy };
   };
 
-  const handleDrag = useCallback(
-    async ({ translation, id }) => {
-      //   const { x, y } = await calculateDeltaXY(translation);
-      //   const delta = Math.round(translation.y / HEIGHT);
-      //   let index = state.order.map((item) => item.id).indexOf(id);
-      //   // const dragOrder =
-      //   let { dragOrder, dragOrder2 } = state;
-      //   let draggedItem = {};
-      //   let ColumnIndex = 1;
-      //   draggedItem = state.order[index];
-      //   dragOrder = state.order.filter((index) => index.id !== id);
-      //   dragOrder2 = state.order2.filter((index) => index.id !== id);
-      //   if (index === -1) {
-      //     index = state.order2.map((item) => item.id).indexOf(id);
-      //     ColumnIndex = 2;
-      //     draggedItem = state.order2[index];
-      //   }
-      //   if (!inRange(index + delta, 0, items.length)) {
-      //     return;
-      //   }
-      //   //Test temp
-      //   if (x > 0) {
-      //     ColumnIndex = 2;
-      //     dragOrder2.splice(0 + delta, 0, draggedItem);
-      //   } else {
-      //     dragOrder.splice(index + delta, 0, draggedItem);
-      //   }
-      //   setState((state) => ({
-      //     ...state,
-      //     draggedIndex: id,
-      //     dragCollumnIndex: ColumnIndex,
-      //     dragOrder,
-      //     dragOrder2,
-      //   }));
-    },
-    [state]
-  );
+  const handleMouseDown = (item) => {
+    setCurrentItem(item);
+    return;
+  };
 
-  const handleDragEnd = useCallback((item) => {
-    if (item.currentList === state.currentList || state.currentList === null) {
+  const updateTask = (item, currentList) => {
+    const TempState = [];
+    const { tasks } = LocalBoard;
+    tasks.map((i) => {
+      if (i.id === item.id) {
+        i.currentList = currentList;
+        return;
+      }
+    });
+    setLocalBoard({ ...LocalBoard, tasks });
+    return;
+  };
+  const HandleDrop = (name) => {
+    console.log(currentItem);
+    console.log(name);
+    if (currentItem.currentList === name || name === null) {
       // SetAllTasks((allTasks) => ({
       //   ...allTasks,
       //   [item.currentList]: state.dragOrder,
       // }));
       return;
     }
-    console.log(item);
-    SetAllTasks((allTasks) => ({
-      ...allTasks,
-      [item.currentList]: allTasks[item.currentList].filter(
-        (i) => i.id !== item.id
-      ),
-      [state.currentList]: [...allTasks[state.currentList], item],
-    }));
+    updateTask(currentItem, name);
 
-    setState((state) => ({
-      ...state,
-      order: state.dragOrder,
-      order2: state.dragOrder2,
-      draggedIndex: null,
-    }));
-  }, []);
-  const handleMouse = useCallback((name) => {
-    setState((state) => ({
-      ...state,
-      currentList: name,
-    }));
-    console.log("name" + name);
-  }, []);
+    // SetAllTasks((allTasks) => ({
+    //   ...allTasks,
+    //   [currentItem.currentList]: allTasks[currentItem.currentList].filter(
+    //     (i) => i.id !== currentItem.id
+    //   ),
+    //   [name]: [...allTasks[name], currentItem],
+    // }));
+    // console.log("drop" + item);
+  };
+  // const handleDrag = useCallback(
+  //   async ({ translation, id }) => {
+  //   const { x, y } = await calculateDeltaXY(translation);
+  //   const delta = Math.round(translation.y / HEIGHT);
+  //   let index = state.order.map((item) => item.id).indexOf(id);
+  //   // const dragOrder =
+  //   let { dragOrder, dragOrder2 } = state;
+  //   let draggedItem = {};
+  //   let ColumnIndex = 1;
+  //   draggedItem = state.order[index];
+  //   dragOrder = state.order.filter((index) => index.id !== id);
+  //   dragOrder2 = state.order2.filter((index) => index.id !== id);
+  //   if (index === -1) {
+  //     index = state.order2.map((item) => item.id).indexOf(id);
+  //     ColumnIndex = 2;
+  //     draggedItem = state.order2[index];
+  //   }
+  //   if (!inRange(index + delta, 0, items.length)) {
+  //     return;
+  //   }
+  //   //Test temp
+  //   if (x > 0) {
+  //     ColumnIndex = 2;
+  //     dragOrder2.splice(0 + delta, 0, draggedItem);
+  //   } else {
+  //     dragOrder.splice(index + delta, 0, draggedItem);
+  //   }
+  //   setState((state) => ({
+  //     ...state,
+  //     draggedIndex: id,
+  //     dragCollumnIndex: ColumnIndex,
+  //     dragOrder,
+  //     dragOrder2,
+  //   }));
+  //   },
+  //   [state]
+  // );
+
+  // const handleDragEnd = useCallback((item) => {
+  //   setState((state) => ({
+  //     ...state,
+  //     order: state.dragOrder,
+  //     order2: state.dragOrder2,
+  //     draggedIndex: null,
+  //   }));
+  // }, []);
+  // const handleMouse = useCallback((name) => {
+  //   setState((state) => ({
+  //     ...state,
+  //     currentList: name,
+  //   }));
+  //   console.log("name" + name);
+  // }, []);
 
   return (
     <div
@@ -120,7 +142,7 @@ const BoardScreen = () => {
         flexDirection: "row",
       }}
     >
-      <Button
+      {/* <Button
         onClick={() => {
           setGlobalState((state) => ({
             ...state,
@@ -129,10 +151,19 @@ const BoardScreen = () => {
         }}
       >
         Test
-      </Button>
+      </Button> */}
       {loaded &&
-        currrentBorad.list.map((item) => (
-          <ListComponent handleMouse={handleMouse} name={item} key={item}>
+        LocalBoard.list.map((item) => (
+          <div
+            onDragOver={(e) => {
+              e.preventDefault();
+            }}
+            onDrop={(e) => HandleDrop(item)}
+            // handleMouse={handleMouse}
+            // HandleDrop={HandleDrop}
+            name={item}
+            key={item}
+          >
             {allTasks[item].map((task) => {
               const isDragging = false;
               const top =
@@ -146,8 +177,7 @@ const BoardScreen = () => {
                   key={task.name}
                   id={task.id}
                   item={task}
-                  onDrag={handleDrag}
-                  onDragEnd={handleDragEnd}
+                  mouseDown={handleMouseDown}
                 >
                   <Rect
                     isDragging={isDragging}
@@ -158,7 +188,7 @@ const BoardScreen = () => {
                 </Draggable>
               );
             })}
-          </ListComponent>
+          </div>
         ))}
     </div>
   );

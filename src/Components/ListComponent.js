@@ -7,7 +7,7 @@ import { Card } from "@mui/material";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 
-const ListComponent = ({ name, children, onDrop, handleMouse }) => {
+const ListComponent = ({ name, children, onDrop, handleMouse, HandleDrop }) => {
   const ListRef = useRef();
   // const { dropState } = useDrop({
   //   ref: ListRef,
@@ -17,8 +17,11 @@ const ListComponent = ({ name, children, onDrop, handleMouse }) => {
   return (
     <div
       style={{ margin: "10px" }}
-      onMouseEnter={() => handleMouse(name)}
-      onMouseLeave={() => handleMouse(null)}
+      onDrop={(e) => {
+        HandleDrop(name);
+      }}
+      // onMouseEnter={() => handleMouse(name)}
+      // onMouseLeave={() => handleMouse(null)}
       ref={ListRef}
     >
       <Card>
