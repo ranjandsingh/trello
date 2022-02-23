@@ -3,6 +3,7 @@ import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import IconButton, { IconButtonProps } from "@mui/material/IconButton";
 import AlertDialog from "./AlertDialog";
+import CardContent from "@mui/material/CardContent";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 

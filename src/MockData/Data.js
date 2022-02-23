@@ -1,6 +1,6 @@
 export const Boards = [
   {
-    id: "1",
+    id: 1,
     name: "Board 1",
     list: ["TODO", "DOING", "DONE"],
     tasks: [
@@ -49,7 +49,7 @@ export const Boards = [
     ],
   },
   {
-    id: "2",
+    id: 2,
     name: "Board 2",
     list: ["TODO", "DOING", "DONE"],
     tasks: [

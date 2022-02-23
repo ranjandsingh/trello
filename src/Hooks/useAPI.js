@@ -1,14 +1,18 @@
-import { useState, useEffect, useContext } from "react";
+import { useEffect, useContext } from "react";
 import Context from "../Context";
 import { Boards } from "../MockData/Data";
 
 const useAPI = () => {
-  const { globalState, currrentBorad, setGlobalState } = useContext(Context);
+  const { globalState, setGlobalState } = useContext(Context);
 
   const fetchBoardById = async (id) => {
-    if (globalState.boards.length > 0)
-      return globalState.boards.find((board) => board.id === id);
-    return Boards.find((board) => board.id === id);
+    let item = {};
+    if (globalState.boards.length > 0) {
+      item = globalState.boards.find((board) => board.id == id);
+      return item;
+    }
+    item = Boards.find((board) => board.id == id);
+    return item;
   };
 
   const updateBoardTask = async (id, tasks) => {
@@ -27,7 +31,7 @@ const useAPI = () => {
     const { tasks } = board;
     tasks.push({
       ...task,
-      ID: tasks.length + 1,
+      id: tasks.length + 1,
     });
     return updateBoardTask(boardId, tasks);
   };
@@ -41,6 +45,28 @@ const useAPI = () => {
   const fetchAllBoards = async () => {
     if (globalState.boards.length === 0) return Boards; // testing only
     return globalState.boards;
+  };
+  const addNewBoard = async (name) => {
+    const boards = globalState.boards;
+    const newBoard = {
+      id: boards.length + 1,
+      name,
+      list: ["TODO", "DOING", "DONE"],
+      tasks: [],
+    };
+    setGlobalState({
+      ...globalState,
+      boards: [...boards, newBoard],
+    });
+  };
+
+  const deleteBoard = async (id) => {
+    const boards = globalState.boards;
+    const updatedBoards = boards.filter((board) => board.id !== id);
+    setGlobalState({
+      ...globalState,
+      boards: updatedBoards,
+    });
   };
 
   useEffect(() => {
@@ -56,6 +82,8 @@ const useAPI = () => {
     addBoardTask,
     deleteBoardTask,
     updateBoardTask,
+    addNewBoard,
+    deleteBoard,
   };
 };
 

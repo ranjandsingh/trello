@@ -57,12 +57,6 @@ const currrentBorad = {
 
 const App = () => {
   const [globalState, setGlobalState] = useState({
-    BoardList: [
-      {
-        id: "1",
-        name: "New Board",
-      },
-    ],
     boards: [],
   });
   return (

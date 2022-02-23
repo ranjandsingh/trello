@@ -1,51 +1,36 @@
-import React, { useState, useLayoutEffect, useEffect, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 
-import { range, inRange } from "lodash";
 import Draggable from "../Components/Draggable";
 import ListComponent from "../Components/ListComponent";
+import Context from "../Context";
 
 import { useParams } from "react-router-dom";
-import Context from "../Context";
+
 import useAPI from "../Hooks/useAPI";
 
-const MAX = 5;
 const HEIGHT = 180;
 
 const SingleBoardScreen = () => {
-  const { globalState, setGlobalState, currrentBorad } = useContext(Context);
+  const { globalState, setGlobalState } = useContext(Context);
   const { fetchBoardById, addBoardTask, deleteBoardTask, updateBoardTask } =
     useAPI();
   const { id } = useParams();
   const [LocalBoard, setLocalBoard] = useState({
-    id: "",
+    id: 0,
     name: "",
-    list: [],
+    list: ["TODO", "DOING", "DONE"],
     tasks: [],
   });
   const [loaded, setLoaded] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
-  const [allTasks, SetAllTasks] = useState(null);
-
-  useLayoutEffect(() => {
-    fetchData();
-  }, []);
-  useEffect(() => {
-    fetchData();
-  }, [id]);
-  useEffect(() => {
-    if (LocalBoard.list.length > 0) {
-      const TempState = [];
-      LocalBoard.list.map((item) => {
-        TempState[item] = LocalBoard.tasks.filter(
-          (i) => i.currentList === item
-        );
-      });
-      SetAllTasks(TempState);
-      setLoaded(true);
-    }
-  }, [LocalBoard]);
+  const [allTasks, SetAllTasks] = useState({
+    TODO: [],
+    DOING: [],
+    DONE: [],
+  });
 
   const fetchData = async () => {
+    console.log("fetchData");
     const board = await fetchBoardById(id);
     setLocalBoard(board);
   };
@@ -60,7 +45,6 @@ const SingleBoardScreen = () => {
     tasks.map((i) => {
       if (i.id === item.id) {
         i.currentList = currentList;
-        return;
       }
     });
     const updatedBoard = await updateBoardTask(LocalBoard.id, tasks);
@@ -93,6 +77,32 @@ const SingleBoardScreen = () => {
     setLocalBoard(updatedBoard);
   };
 
+  // useLayoutEffect(() => {
+  //   fetchData();
+  // });
+  useEffect(() => {
+    fetchData();
+  }, [id]);
+  useEffect(() => {
+    if (LocalBoard.list.length > 0 && LocalBoard.tasks.length > 0) {
+      const TempState = [];
+      LocalBoard.list.map((item) => {
+        TempState[item] = LocalBoard.tasks.filter(
+          (i) => i.currentList === item
+        );
+      });
+      SetAllTasks(TempState);
+      setLoaded(true);
+    } else {
+      SetAllTasks({
+        TODO: [],
+        DOING: [],
+        DONE: [],
+      });
+      setLoaded(true);
+    }
+  }, [LocalBoard]);
+
   return (
     <div
       style={{
@@ -111,6 +121,7 @@ const SingleBoardScreen = () => {
         Test
       </Button> */}
       {loaded &&
+        LocalBoard &&
         LocalBoard.list.map((item) => (
           <ListComponent
             onDrop={HandleDrop}
@@ -120,24 +131,18 @@ const SingleBoardScreen = () => {
             key={item}
             addTask={handleAddTask}
           >
-            {allTasks[item].map((task) => {
-              const isDragging = false;
-              const top =
-                allTasks[item].map((i) => i.id).indexOf(task.id) *
-                (HEIGHT + 10);
-              const draggedTop =
-                allTasks[item].map((i) => i.id).indexOf(task.id) *
-                (HEIGHT + 10);
-              return (
-                <Draggable
-                  key={task.name}
-                  id={task.id}
-                  item={task}
-                  mouseDown={handleMouseDown}
-                  onDelete={handleDeleteTask}
-                />
-              );
-            })}
+            {allTasks[item] &&
+              allTasks[item].map((task) => {
+                return (
+                  <Draggable
+                    key={task.name}
+                    id={task.id}
+                    item={task}
+                    mouseDown={handleMouseDown}
+                    onDelete={handleDeleteTask}
+                  />
+                );
+              })}
           </ListComponent>
         ))}
     </div>

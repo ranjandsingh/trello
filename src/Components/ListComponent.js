@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import { Card } from "@mui/material";
-import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -69,7 +68,7 @@ const ListComponent = ({ name, children, onDrop, addTask }) => {
       </Dialog>
       <Card
         style={{
-          height: "100vh",
+          height: "90vh",
           minWidth: "300px",
         }}
       >
