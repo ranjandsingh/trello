@@ -49,6 +49,7 @@ const AddNewBoard = ({ item, onCreate }) => {
       <Card
         onClick={() => setOpenDialog(true)}
         style={{
+          cursor: "pointer",
           height: "200px",
           minWidth: "150px",
           marginTop: "10px",

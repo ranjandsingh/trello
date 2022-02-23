@@ -52,18 +52,20 @@ const Sidebar = () => {
             </List>
             <Divider />
             <List>
-              {globalState.boards.map((board) => {
-                return (
-                  <Navlink key={board.id} to={`/board/${board.id}`}>
-                    <ListItem button key={board.name}>
-                      <ListItemIcon>
-                        <DashboardIcon />
-                      </ListItemIcon>
-                      <ListItemText primary={board.name} />
-                    </ListItem>
-                  </Navlink>
-                );
-              })}
+              {globalState.boards
+                .sort((a, b) => a.id - b.id)
+                .map((board) => {
+                  return (
+                    <Navlink key={board.id} to={`/board/${board.id}`}>
+                      <ListItem button key={board.name}>
+                        <ListItemIcon>
+                          <DashboardIcon />
+                        </ListItemIcon>
+                        <ListItemText primary={board.name} />
+                      </ListItem>
+                    </Navlink>
+                  );
+                })}
             </List>
           </Box>
         </Drawer>
