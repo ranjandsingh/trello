@@ -69,8 +69,8 @@ const App = () => {
     <Context.Provider value={{ globalState, setGlobalState, currrentBorad }}>
       <Router>
         <Routes>
-          <Route path="/" element={<HomeScreen />} />
           <Route element={<Layout />}>
+            <Route path="/" element={<BoardScreen />} />
             <Route path="/board" element={<BoardScreen />} />
             <Route path="/board/:id" element={<SingleBoardScreen />} />
           </Route>

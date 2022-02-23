@@ -11,8 +11,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import CardHeader from "@mui/material/CardHeader";
-import IconButton, { IconButtonProps } from "@mui/material/IconButton";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
+import IconButton from "@mui/material/IconButton";
+import AddIcon from "@mui/icons-material/Add";
 
 const ListComponent = ({ name, children, onDrop, addTask }) => {
   const [taskNamem, setTaskName] = useState("");
@@ -76,11 +76,10 @@ const ListComponent = ({ name, children, onDrop, addTask }) => {
         <CardHeader
           action={
             <IconButton aria-label="settings" onClick={handleClickOpen}>
-              <MoreVertIcon />
+              <AddIcon />
             </IconButton>
           }
           title={<h3>{name}</h3>}
-          subheader="September 14, 2016"
         />
         <CardContent>
           <div className="body">{children}</div>

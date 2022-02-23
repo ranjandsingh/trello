@@ -1,4 +1,9 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
+import Card from "@mui/material/Card";
+import CardHeader from "@mui/material/CardHeader";
+import IconButton, { IconButtonProps } from "@mui/material/IconButton";
+
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const POSITION = { x: 0, y: 0 };
 
@@ -65,8 +70,28 @@ const Drraggable = ({ children, onDrag, onDragEnd, id, item, mouseDown }) => {
     }
   }, [state.isDragging, handleMouseMove, handleMouseUp]);
 
+  const handleClickOpen = () => {
+    console.log("handleClickOpen");
+  };
+
   return (
     <div style={styles} onMouseDown={handleMouseDown} draggable>
+      <Card
+        style={{
+          height: "100px",
+          minWidth: "150px",
+          marginTop: "10px",
+        }}
+      >
+        <CardHeader
+          action={
+            <IconButton aria-label="settings" onClick={handleClickOpen}>
+              <DeleteIcon />
+            </IconButton>
+          }
+          title={item.name}
+        />
+      </Card>
       {children}
     </div>
   );

@@ -9,6 +9,8 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import HomeIcon from "@mui/icons-material/Home";
 import Context from "../Context";
 import Navlink from "./Navlink";
 
@@ -39,29 +41,29 @@ const Sidebar = () => {
             // onKeyDown={toggleDrawer(anchor, false)}
           >
             <List>
+              <Navlink key={"home"} to="/">
+                <ListItem button key={"home"}>
+                  <ListItemIcon>
+                    <HomeIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={"Home"} />
+                </ListItem>
+              </Navlink>
+            </List>
+            <Divider />
+            <List>
               {globalState.boards.map((board) => {
                 return (
                   <Navlink key={board.id} to={`/board/${board.id}`}>
                     <ListItem button key={board.name}>
                       <ListItemIcon>
-                        <InboxIcon />
+                        <DashboardIcon />
                       </ListItemIcon>
                       <ListItemText primary={board.name} />
                     </ListItem>
                   </Navlink>
                 );
               })}
-            </List>
-            <Divider />
-            <List>
-              {["All mail", "Trash", "Spam"].map((text, index) => (
-                <ListItem button key={text}>
-                  <ListItemIcon>
-                    {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                  </ListItemIcon>
-                  <ListItemText primary={text} />
-                </ListItem>
-              ))}
             </List>
           </Box>
         </Drawer>

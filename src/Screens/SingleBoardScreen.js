@@ -13,6 +13,8 @@ const HEIGHT = 180;
 
 const SingleBoardScreen = () => {
   const { globalState, setGlobalState, currrentBorad } = useContext(Context);
+  const { fetchBoardById, addBoardTask, deleteBoardTask, updateBoardTask } =
+    useAPI();
   const { id } = useParams();
   const [LocalBoard, setLocalBoard] = useState({
     id: "",
@@ -23,7 +25,7 @@ const SingleBoardScreen = () => {
   const [loaded, setLoaded] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
   const [allTasks, SetAllTasks] = useState(null);
-  const { fetchBoardById } = useAPI();
+
   useLayoutEffect(() => {
     fetchData();
   }, []);
@@ -53,8 +55,7 @@ const SingleBoardScreen = () => {
     return;
   };
 
-  const updateTask = (item, currentList) => {
-    const TempState = [];
+  const updateTask = async (item, currentList) => {
     const { tasks } = LocalBoard;
     tasks.map((i) => {
       if (i.id === item.id) {
@@ -62,7 +63,9 @@ const SingleBoardScreen = () => {
         return;
       }
     });
-    setLocalBoard({ ...LocalBoard, tasks });
+    const updatedBoard = await updateBoardTask(LocalBoard.id, tasks);
+    setLocalBoard(updatedBoard);
+
     return;
   };
 
@@ -75,15 +78,14 @@ const SingleBoardScreen = () => {
     updateTask(currentItem, name);
   };
 
-  const handleAddTask = ({ name, currentList, description }) => {
-    const { tasks } = LocalBoard;
-    tasks.push({
+  const handleAddTask = async ({ name, currentList, description }) => {
+    const newtask = {
       name,
-      id: tasks.length + 1,
       description,
       currentList,
-    });
-    setLocalBoard({ ...LocalBoard, tasks });
+    };
+    const updatedBoard = await addBoardTask(LocalBoard.id, newtask);
+    setLocalBoard(updatedBoard);
   };
 
   return (
@@ -127,14 +129,7 @@ const SingleBoardScreen = () => {
                   id={task.id}
                   item={task}
                   mouseDown={handleMouseDown}
-                >
-                  <Rect
-                    isDragging={isDragging}
-                    top={isDragging ? top : draggedTop}
-                  >
-                    {task.name}
-                  </Rect>
-                </Draggable>
+                />
               );
             })}
           </ListComponent>
