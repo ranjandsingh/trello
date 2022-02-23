@@ -17,7 +17,7 @@ const Sidebar = () => {
   return (
     <div
       style={{
-        width: "255px",
+        width: "20vw",
         height: "100%",
         backgroundColor: "lightgray",
       }}
@@ -31,14 +31,15 @@ const Sidebar = () => {
         >
           <Box
             sx={{
-              width: 250,
+              width: "19vw",
+              marginRight: "1rem",
             }}
             role="presentation"
             // onClick={toggleDrawer(anchor, false)}
             // onKeyDown={toggleDrawer(anchor, false)}
           >
             <List>
-              {globalState.BoardList.map((board) => {
+              {globalState.boards.map((board) => {
                 return (
                   <Navlink key={board.id} to={`/board/${board.id}`}>
                     <ListItem button key={board.name}>

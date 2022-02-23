@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import BoardScreen from "./Screens/BoardScreen";
 import HomeScreen from "./Screens/HomeScreen";
+import SingleBoardScreen from "./Screens/SingleBoardScreen";
 import Context from "./Context";
 import Layout from "./Components/Layout";
 
@@ -62,6 +63,7 @@ const App = () => {
         name: "New Board",
       },
     ],
+    boards: [],
   });
   return (
     <Context.Provider value={{ globalState, setGlobalState, currrentBorad }}>
@@ -69,7 +71,8 @@ const App = () => {
         <Routes>
           <Route path="/" element={<HomeScreen />} />
           <Route element={<Layout />}>
-            <Route path="/board/:id" element={<BoardScreen />} />
+            <Route path="/board" element={<BoardScreen />} />
+            <Route path="/board/:id" element={<SingleBoardScreen />} />
           </Route>
         </Routes>
       </Router>

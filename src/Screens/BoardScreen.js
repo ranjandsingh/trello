@@ -1,140 +1,61 @@
-import React, { useState, useCallback, useEffect, useContext } from "react";
-
-import { range, inRange } from "lodash";
-import Draggable from "../Components/Draggable";
-import ListComponent from "../Components/ListComponent";
-import { Container, Rect } from "../Components/Wrappers";
-import Sidebar from "../Components/Sidebar";
-import Button from "@mui/material/Button";
+import React, { useState, useLayoutEffect, useEffect, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import Context from "../Context";
+import useAPI from "../Hooks/useAPI";
+import { styled } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
 
-const MAX = 5;
-const HEIGHT = 180;
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: "center",
+  color: theme.palette.text.secondary,
+}));
 
 const BoardScreen = () => {
+  let navigate = useNavigate();
   const { globalState, setGlobalState, currrentBorad } = useContext(Context);
-
-  // const [state, setState] = useState({
-  //   // order: items,
-  //   // order2: ITEMS2,
-  //   // dragOrder: items,
-  //   // dragOrder2: ITEMS2, // items order while dragging
-  //   draggedIndex: null,
-  //   draggedItem: null,
-  //   currentCountainer: null,
-  //   currentList: null,
-  // });
-  const [LocalBoard, setLocalBoard] = useState(currrentBorad);
-  const [loaded, setLoaded] = useState(false);
-  const [currentItem, setCurrentItem] = useState(null);
-  const [allTasks, SetAllTasks] = useState(null);
-  useEffect(() => {
-    const TempState = [];
-    LocalBoard.list.map((item) => {
-      TempState[item] = LocalBoard.tasks.filter((i) => i.currentList === item);
-    });
-    SetAllTasks(TempState);
-    setLoaded(true);
-  }, [LocalBoard]);
-
-  const calculateDeltaXY = async ({ x, y }) => {
-    const translationy = Math.round(y / HEIGHT);
-    const translationx = Math.round(x / 500);
-    return { x: translationx, y: translationy };
-  };
-
-  const handleMouseDown = (item) => {
-    setCurrentItem(item);
-    return;
-  };
-
-  const updateTask = (item, currentList) => {
-    const TempState = [];
-    const { tasks } = LocalBoard;
-    tasks.map((i) => {
-      if (i.id === item.id) {
-        i.currentList = currentList;
-        return;
-      }
-    });
-    setLocalBoard({ ...LocalBoard, tasks });
-    return;
-  };
-
-  const HandleDrop = (name) => {
-    console.log(currentItem);
-    console.log(name);
-    if (currentItem.currentList === name || name === null) {
-      return;
-    }
-    updateTask(currentItem, name);
-  };
-
-  const handleAddTask = ({ name, currentList, description }) => {
-    const { tasks } = LocalBoard;
-    tasks.push({
-      name,
-      id: tasks.length + 1,
-      description,
-      currentList,
-    });
-    setLocalBoard({ ...LocalBoard, tasks });
+  const { fetchBoardById, fetchAllBoards } = useAPI();
+  const [loading, setLoading] = useState(true);
+  useLayoutEffect(() => {
+    fetchData();
+  }, []);
+  const fetchData = async () => {
+    const boards = await fetchAllBoards();
+    setGlobalState({ ...globalState, boards });
+    setLoading(false);
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "row",
-      }}
-    >
-      {/* <Button
-        onClick={() => {
-          setGlobalState((state) => ({
-            ...state,
-            currentBoard: currrentBorad,
-          }));
-        }}
-      >
-        Test
-      </Button> */}
-      {loaded &&
-        LocalBoard.list.map((item) => (
-          <ListComponent
-            onDrop={HandleDrop}
-            // handleMouse={handleMouse}
-            // HandleDrop={HandleDrop}
-            name={item}
-            key={item}
-            addTask={handleAddTask}
-          >
-            {allTasks[item].map((task) => {
-              const isDragging = false;
-              const top =
-                allTasks[item].map((i) => i.id).indexOf(task.id) *
-                (HEIGHT + 10);
-              const draggedTop =
-                allTasks[item].map((i) => i.id).indexOf(task.id) *
-                (HEIGHT + 10);
+    <Box sx={{ flexGrow: 1 }}>
+      <Grid container style={{ width: "80vw" }} spacing={2}>
+        <Grid item xs={12} md={12}>
+          <Item>
+            <h3>All Boards</h3>
+          </Item>
+        </Grid>
+        {loading ? (
+          <Grid item xs={12}>
+            <Item>Loading...</Item>
+          </Grid>
+        ) : (
+          <>
+            {globalState.boards.map((board) => {
               return (
-                <Draggable
-                  key={task.name}
-                  id={task.id}
-                  item={task}
-                  mouseDown={handleMouseDown}
-                >
-                  <Rect
-                    isDragging={isDragging}
-                    top={isDragging ? top : draggedTop}
-                  >
-                    {task.name}
-                  </Rect>
-                </Draggable>
+                <Grid key={board.id} item xs={4}>
+                  <Item onClick={() => navigate(`/board/${board.id}`)}>
+                    {board.name}
+                  </Item>
+                </Grid>
               );
             })}
-          </ListComponent>
-        ))}
-    </div>
+          </>
+        )}
+      </Grid>
+    </Box>
   );
 };
 
