@@ -34,7 +34,7 @@ const useAPI = () => {
   const deleteBoardTask = async (boardId, taskId) => {
     const board = await fetchBoardById(boardId);
     const { tasks } = board;
-    const updatedTasks = tasks.filter((task) => task.ID !== taskId);
+    const updatedTasks = tasks.filter((task) => task.id !== taskId);
     return updateBoardTask(boardId, updatedTasks);
   };
 

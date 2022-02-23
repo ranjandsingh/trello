@@ -2,17 +2,27 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import IconButton, { IconButtonProps } from "@mui/material/IconButton";
+import AlertDialog from "./AlertDialog";
 
 import DeleteIcon from "@mui/icons-material/Delete";
 
 const POSITION = { x: 0, y: 0 };
 
-const Drraggable = ({ children, onDrag, onDragEnd, id, item, mouseDown }) => {
+const Drraggable = ({
+  children,
+  onDrag,
+  onDragEnd,
+  id,
+  item,
+  mouseDown,
+  onDelete,
+}) => {
   const [state, setState] = useState({
     isDragging: false,
     origin: POSITION,
     translation: POSITION,
   });
+  const [openDialog, setOpenDialog] = useState(false);
 
   const styles = useMemo(
     () => ({
@@ -71,11 +81,19 @@ const Drraggable = ({ children, onDrag, onDragEnd, id, item, mouseDown }) => {
   }, [state.isDragging, handleMouseMove, handleMouseUp]);
 
   const handleClickOpen = () => {
-    console.log("handleClickOpen");
+    // console.log("handleClickOpen");
+    onDelete(item.id);
+    setOpenDialog(false);
   };
 
   return (
     <div style={styles} onMouseDown={handleMouseDown} draggable>
+      <AlertDialog
+        open={openDialog}
+        handleClose={() => setOpenDialog(false)}
+        handleSubmit={handleClickOpen}
+        name="Task"
+      />
       <Card
         style={{
           height: "100px",
@@ -85,7 +103,10 @@ const Drraggable = ({ children, onDrag, onDragEnd, id, item, mouseDown }) => {
       >
         <CardHeader
           action={
-            <IconButton aria-label="settings" onClick={handleClickOpen}>
+            <IconButton
+              aria-label="settings"
+              onClick={() => setOpenDialog(true)}
+            >
               <DeleteIcon />
             </IconButton>
           }

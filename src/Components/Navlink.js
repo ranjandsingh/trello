@@ -8,7 +8,11 @@ const Navlink = ({ children, to, ...props }) => {
     <div>
       <div>
         <Link
-          style={{ textDecoration: match ? "underline" : "none" }}
+          style={{
+            textDecoration: match ? "underline" : "none",
+            color: match ? "blue" : "black",
+            fontWeight: match ? "bold" : "normal",
+          }}
           to={to}
           {...props}
         >

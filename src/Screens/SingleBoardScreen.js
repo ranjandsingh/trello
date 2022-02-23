@@ -3,7 +3,7 @@ import React, { useState, useLayoutEffect, useEffect, useContext } from "react";
 import { range, inRange } from "lodash";
 import Draggable from "../Components/Draggable";
 import ListComponent from "../Components/ListComponent";
-import { Container, Rect } from "../Components/Wrappers";
+
 import { useParams } from "react-router-dom";
 import Context from "../Context";
 import useAPI from "../Hooks/useAPI";
@@ -87,6 +87,11 @@ const SingleBoardScreen = () => {
     const updatedBoard = await addBoardTask(LocalBoard.id, newtask);
     setLocalBoard(updatedBoard);
   };
+  const handleDeleteTask = async (id) => {
+    console.log(id);
+    const updatedBoard = await deleteBoardTask(LocalBoard.id, id);
+    setLocalBoard(updatedBoard);
+  };
 
   return (
     <div
@@ -129,6 +134,7 @@ const SingleBoardScreen = () => {
                   id={task.id}
                   item={task}
                   mouseDown={handleMouseDown}
+                  onDelete={handleDeleteTask}
                 />
               );
             })}
