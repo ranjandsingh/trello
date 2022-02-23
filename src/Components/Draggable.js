@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from "react";
 
 const POSITION = { x: 0, y: 0 };
 
-const Drraggable = ({ children, onDrag, onDragEnd, id }) => {
+const Drraggable = ({ children, onDrag, onDragEnd, id, item, mouseDown }) => {
   const [state, setState] = useState({
     isDragging: false,
     origin: POSITION,
@@ -12,33 +12,37 @@ const Drraggable = ({ children, onDrag, onDragEnd, id }) => {
   const styles = useMemo(
     () => ({
       cursor: state.isDragging ? "-webkit-grabbing" : "-webkit-grab",
-      transform: `translate(${state.translation.x}px,${state.translation.y}px)`,
+      // transform: `translate(${state.translation.x}px,${state.translation.y}px)`,
       transition: state.isDragging ? "none" : "transform 500ms",
       zIndex: state.isDragging ? 2 : 1,
-      position: state.isDragging ? "absolute" : "relative",
+      // position: state.isDragging ? "absolute" : "relative",
     }),
     [state.isDragging, state.translation]
   );
 
-  const handleMouseDown = useCallback(({ clientX, clientY }) => {
-    setState((state) => ({
-      ...state,
-      isDragging: true,
-      origin: { x: clientX, y: clientY },
-    }));
-  }, []);
+  const handleMouseDown = useCallback(
+    ({ clientX, clientY }) => {
+      setState((state) => ({
+        ...state,
+        isDragging: true,
+        origin: { x: clientX, y: clientY },
+      }));
+      mouseDown(item);
+    },
+    [item, id]
+  );
 
   const handleMouseMove = useCallback(
     ({ clientX, clientY }) => {
-      const translation = {
-        x: clientX - state.origin.x,
-        y: clientY - state.origin.y,
-      };
-      setState((state) => ({
-        ...state,
-        translation,
-      }));
-      onDrag({ translation, id });
+      //   const translation = {
+      //     x: clientX - state.origin.x,
+      //     y: clientY - state.origin.y,
+      //   };
+      //   setState((state) => ({
+      //     ...state,
+      //     translation,
+      //   }));
+      //   onDrag({ translation, id });
     },
     [state.origin, onDrag, id]
   );
@@ -48,8 +52,7 @@ const Drraggable = ({ children, onDrag, onDragEnd, id }) => {
       ...state,
       isDragging: false,
     }));
-    onDragEnd();
-  }, [onDragEnd]);
+  }, []);
 
   useEffect(() => {
     if (state.isDragging) {
@@ -63,7 +66,7 @@ const Drraggable = ({ children, onDrag, onDragEnd, id }) => {
   }, [state.isDragging, handleMouseMove, handleMouseUp]);
 
   return (
-    <div style={styles} onMouseDown={handleMouseDown}>
+    <div style={styles} onMouseDown={handleMouseDown} draggable>
       {children}
     </div>
   );
